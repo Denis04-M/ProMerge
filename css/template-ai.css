@@ -1,0 +1,219 @@
+:root {
+    --secondary-color: #091d32;
+    --border-radius: 10px;
+    --font-size-base: 14px;
+  }
+  
+  .ai-template-container {
+    max-width: 750px;
+    margin: 130px auto 40px;
+    padding: 30px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    color: var(--secondary-color);
+    text-align: center;
+  }
+  
+  .ai-template-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+  }
+  
+  .ai-template-container p {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+  
+  .form-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+  }
+  
+  .input-field,
+  .textarea-field {
+    width: 100%;
+    padding: 12px 40px 12px 45px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    background: #fff;
+  }
+  
+
+  
+  input[type="file"] {
+    display: none;
+  }
+  
+  .template-preview {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .save-btn {
+    background: var(--secondary-color);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .save-btn:hover {
+    background: #0c2b46;
+  }
+  :root {
+    --generate-color: #007bff;
+    --generate-hover: #0056b3;
+    --dashboard-color: #091d32;
+    --dashboard-hover: #06253f;
+    --save-color: #28a745;
+    --save-hover: #1e7e34;
+    --delete-color: #dc3545;
+    --delete-hover: #bd2130;
+  }
+
+  .ai-template-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    margin: 130px auto 60px;
+    padding: 30px 40px;
+    max-width: 600px;
+    color: #091d32;
+    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .ai-template-container h1 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .input-field,
+  .textarea-field {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    background: #fff;
+  }
+
+  .upload-btn {
+    background: var(--dashboard-color);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.3s;
+  }
+
+  .upload-btn:hover {
+    background: var(--dashboard-hover);
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .btn-generate {
+    background-color: var(--generate-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .btn-generate:hover {
+    background-color: var(--generate-hover);
+  }
+
+  .btn-save {
+    background-color: var(--save-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .btn-save:hover {
+    background-color: var(--save-hover);
+  }
+
+  .btn-delete {
+    background-color: var(--delete-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .btn-delete:hover {
+    background-color: var(--delete-hover);
+  }
+
+  .generated-template {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #333;
+    white-space: pre-wrap;
+  }
+
+  .hidden {
+    display: none;
+  }

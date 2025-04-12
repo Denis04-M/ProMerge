@@ -1,0 +1,118 @@
+:root {
+    --primary-color: #091d32;
+    --secondary-color: #b8e4fd;
+    --accent-color: #67aaf7;
+    --hover-color: #75d1ff;
+    --white: #ffffff;
+    --text-color: #000000;
+    --border-radius: 10px;
+    --transition-speed: 0.3s ease;
+    --shadow-light: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  button,
+  .btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: var(--border-radius);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: var(--shadow-light);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--hover-color);
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+  }
+  
+  .btn-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+  }
+  
+  .btn-danger {
+    background-color: #e74c3c;
+    color: var(--white);
+  }
+  
+  .btn-danger:hover {
+    background-color: #c0392b;
+  }
+  
+  .btn-success {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn-success:hover {
+    background-color: #218838;
+  }
+  
+  .btn i,
+  button i {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+  
+  .btn-block {
+    width: 100%;
+  }
+  
+  .btn-rounded {
+    border-radius: 50px;
+    padding: 12px 28px;
+  }
+  
+
+  
+ 
+  .btn:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .nav-buttons button {
+    margin-left: 5px;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    border: none;
+    font-weight: 600;
+    background: white;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .nav-buttons button:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  

@@ -1,0 +1,67 @@
+:root {
+  --secondary-color: #091d32;
+  border: none;
+  --border-radius: 10px;
+  --font-size-base: 14px;
+}
+
+.create-template-container {
+  max-width: 750px;
+  height: 400px;
+  margin: 120px auto 60px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 10px;
+  margin-top: 150px;
+
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  color: #091d32;
+  text-align: center; 
+}
+
+.create-template-container h1 {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.upload-btn,
+.process-btn {
+  width: 100%;
+  padding: 12px 15px;
+  background: #091d32;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+}
+
+.upload-btn:hover,
+.process-btn:hover {
+  background: #a2d8f2;
+  color: black;
+}
+
+input[type="file"] {
+  display: none;
+}
