@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDFs | ProMerge</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/buttons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .username { font-size: 18px; font-weight: 600; color: #091d32; }
+    .logo {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+}
+    .pdf-container {
+      max-width: 1000px;
+      margin: 140px auto 80px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .pdf-container h1 {
+      color: #091d32;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .pdf-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    .pdf-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pdf-icon {
+      font-size: 26px;
+      color: #d61f1f;
+    }
+    .pdf-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #091d32;
+    }
+    .pdf-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .pdf-actions button, .pdf-actions a {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-view { background-color: #007bff; }
+    .btn-delete { background-color: #dc3545; }
+    .btn-distribute { background-color: #28a745; }
+    .btn-view:hover { background-color: #0056b3; }
+    .btn-delete:hover { background-color: #bd2130; }
+    .btn-distribute:hover { background-color: #1e7e34; }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .pagination button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #091d32;
+      color: white;
+    }
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="home.html">
+        <img src="logo.png" alt="ProMerge Logo" style="height:50px;" />
+      </a>
+      <span class="username"><strong><span id="userName"></span></strong>'s PDFs</span>
+    </div>
+    <div class="nav-buttons">
+      <button class="dashboard-btn" onclick="goToDashboard()">
+        <i class="fas fa-home"></i> Dashboard
+      </button>
+    </div>
+  </nav>
+
+  <main class="pdf-container">
+    <h1>Generated PDFs</h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search PDFs by name...">
+    </div>
+    <div id="pdfList"></div>
+    <div class="pagination">
+      <button id="prevBtn" disabled>Previous</button>
+      <button id="nextBtn" disabled>Next</button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProMerge. All Rights Reserved.</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIK9LMoVpUXPwpZi-gyvFWJInlyPsZWKQ",
+      authDomain: "promerge-7a44e.firebaseapp.com",
+      projectId: "promerge-7a44e",
+      storageBucket: "promerge-7a44e.appspot.com",
+      messagingSenderId: "456764615195",
+      appId: "1:456764615195:web:ce56a94f08265bfef5a6be"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    let allPdfs = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+      document.getElementById("userName").textContent = user.displayName || "User";
+
+      const q = query(collection(db, "pdfs"), where("uid", "==", user.uid));
+      const snapshot = await getDocs(q);
+      allPdfs = snapshot.docs.map(doc => doc.data());
+
+      renderPage();
+      document.getElementById("searchInput").addEventListener("input", renderPage);
+    });
+
+    function renderPage() {
+      const list = document.getElementById("pdfList");
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allPdfs.filter(p => p.name.toLowerCase().includes(search));
+      const start = (currentPage - 1) * itemsPerPage;
+      const paginated = filtered.slice(start, start + itemsPerPage);
+
+      list.innerHTML = paginated.map(pdf => `
+        <div class="pdf-card">
+          <div class="pdf-info">
+            <i class="fas fa-file-pdf pdf-icon"></i>
+            <span class="pdf-name">${pdf.name}</span>
+          </div>
+          <div class="pdf-actions">
+            <a href="${pdf.url}" target="_blank" class="btn-view">View</a>
+            <button class="btn-delete" onclick="alert('Delete: ${pdf.name}')">Delete</button>
+            <button class="btn-distribute" onclick="alert('Distribute: ${pdf.name}')">Distribute</button>
+          </div>
+        </div>`).join("");
+
+      document.getElementById("prevBtn").disabled = currentPage === 1;
+      document.getElementById("nextBtn").disabled = start + itemsPerPage >= filtered.length;
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      currentPage--;
+      renderPage();
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentPage++;
+      renderPage();
+    });
+  </script>
+  <script>
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

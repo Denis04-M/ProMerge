@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    :root {
+      --primary-color: #091d32;
+      --secondary-color: #b8e4fd;
+      --accent-color: #67aaf7;
+      --hover-color: #75d1ff;
+      --white: #ffffff;
+      --text-color: #000000;
+      --border-radius: 10px;
+      --transition-speed: 0.3s ease;
+      --shadow-light: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      width: 100%;
+      color: var(--text-color);
+      background: linear-gradient(to bottom, #ffffff 5%, #a9e9ff 23%, #091d32 95%);
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%; 
+      height: 80px;
+      background-color: rgba(255, 255, 255, 0.26);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 15px;
+    }
+
+    .username {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .nav-buttons button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 600;
+      background: var(--white);
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: var(--transition-speed);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-buttons button:hover {
+      background-color: var(--primary-color);
+      color: var(--white);
+    }
+
+    .create-template-container {
+      max-width: 750px;
+      margin: 150px auto 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-light);
+      color: var(--primary-color);
+      text-align: center;
+    }
+
+    .create-template-container h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .create-template-container p {
+      margin-bottom: 30px;
+      color: var(--primary-color);
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .upload-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .upload-btn {
+      padding: 15px;
+      background-color: var(--primary-color);
+      color: var(--white);
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-speed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .upload-btn:hover {
+      background-color: var(--hover-color);
+      color: var(--text-color);
+    }
+
+    .file-info {
+      text-align: left;
+      font-size: 14px;
+      padding: 0 10px;
+    }
+
+    .file-details {
+      display: flex;
+      justify-content: space-between;
+      color: var(--primary-color);
+    }
+
+    .file-status {
+      font-weight: 600;
+    }
+
+    .file-status.ready {
+      color: #28a745;
+    }
+
+    .process-btn {
+      padding: 15px;
+      background-color: #28a745;
+      color: var(--white);
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition-speed);
+      margin-top: 20px;
+      box-shadow: var(--shadow-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .process-btn:hover {
+      background-color: #218838;
+    }
+
+    .process-btn:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      cursor: not-allowed;
+    }
+
+    .progress-container {
+      width: 100%;
+      display: none;
+      align-items: center;
+      gap: 15px;
+      margin: 10px 0;
+    }
+
+    .progress-bar {
+      flex-grow: 1;
+      height: 10px;
+      background-color: var(--secondary-color);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--accent-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .download-container {
+      display: none;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px auto;
+      max-width: 750px;
+    }
+
+    .download-btn, .view-btn {
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-speed);
+    }
+
+    .download-btn {
+      background-color: var(--accent-color);
+      color: var(--white);
+    }
+
+    .download-btn:hover {
+      background-color: var(--hover-color);
+    }
+
+    .view-btn {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+    }
+
+    .view-btn:hover {
+      background-color: var(--hover-color);
+      color: var(--text-color);
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: var(--border-radius);
+      margin: 10px 0;
+      display: none;
+    }
+
+    .status-message.info {
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
+      display: block;
+    }
+
+    .status-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    .status-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    .dataset-preview {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .dataset-preview h4 {
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .preview-container {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .preview-row {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .preview-more {
+      padding: 8px 0;
+      font-style: italic;
+      color: var(--primary-color);
+    }
+
+    .error-message {
+      color: #dc3545;
+      background-color: rgba(220, 53, 69, 0.1);
+      padding: 10px;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.281);
+      color: var(--white);
+      padding: 10px;
+      position: fixed;
+      height: 50px;
+      bottom: 0;
+      left: 0;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .footer p {
+      margin: 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="home.html">
+        <a href="home.html"><img src="/images/logo.png" alt="ProMerge Logo" style="height:50px;" /></a>
+      </a>
+      <span class="username">Welcome, <span id="userName">User</span></span>
+    </div>
+    <div class="nav-buttons">
+      <button class="dashboard-btn" onclick="goToDashboard()"><i class="fas fa-home"></i> Dashboard</button>
+    </div>
+  </nav>
+
+<div class="create-template-container">
+    <h1>Create New Template</h1>
+    <p>Please upload a clear Microsoft Word (.docx) or PDF file to ensure our AI can accurately process and scan your document.</p>
+    <div class="form-container">
+        <label for="fileUpload" class="upload-btn">Upload Your File Here <i class="fas fa-upload"></i></label>
+        <input type="file" id="fileUpload" style="display: none;">
+        
+        <label for="datasetUpload" class="upload-btn">Upload Your Dataset <i class="fas fa-database"></i></label>
+        <input type="file" id="datasetUpload" style="display: none;">
+        
+        <button class="process-btn btn-success btn-block" id="processBtn">
+          <i class="fas fa-cogs"></i> Generate PDFs
+        </button>
+    </div>
+</div>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
+    import { getFirestore, collection, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTyjjg9XUVfzuxoL-1QbjXOMxRut8qj_w",
+      authDomain: "promerge-77.firebaseapp.com",
+      projectId: "promerge-77",
+      storageBucket: "promerge-77.firebasestorage.app",
+      messagingSenderId: "43078751800",
+      appId: "1:43078751800:web:df05bfe75eeb348ffcb8cd",
+      measurementId: "G-WEEYGM82WK"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const storage = getStorage(app, "gs://promerge-77.firebasestorage.app");
+    const db = getFirestore(app);
+  
+    let currentUser = null;
+    let templateFile = null;
+    let datasetFile = null;
+    let isProcessing = false;
+    let currentJobId = null;
+    let jobDocRef = null;
+  
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("userName").textContent = user.displayName || "User";
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  
+    document.getElementById("templateUpload").addEventListener("change", (e) => {
+      templateFile = e.target.files[0];
+      const label = document.getElementById("templateLabel");
+      const info = document.getElementById("templateInfo");
+  
+      if (templateFile) {
+        label.innerHTML = `<i class="fas fa-file-word"></i> ${templateFile.name}`;
+        info.innerHTML = `
+          <div class="file-details">
+            <span>${formatFileSize(templateFile.size)}</span>
+            <span class="file-status ready"><i class="fas fa-check-circle"></i> Ready</span>
+          </div>`;
+      } else {
+        label.innerHTML = `<i class="fas fa-upload"></i> Upload Template (.dotx)`;
+        info.innerHTML = '';
+      }
+    });
+  
+  
+    function showStatus(message, type) {
+      const statusEl = document.getElementById("statusMessage");
+      statusEl.textContent = message;
+      statusEl.className = `status-message ${type}`;
+    }
+  
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+  </script>
+
+  <script>
+    function goToDashboard() {
+        window.location.href = "dashboard.html"; 
+    }
+    
+</script>
+<script type="module" src="auth-handler.js"></script>
+
+
+<footer class="footer">
+  <p>&copy; 2025 ProMerge. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

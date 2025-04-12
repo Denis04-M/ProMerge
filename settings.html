@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings | ProMerge</title>
+  <link rel="icon" href="favicon.png" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<style>
+:root {
+  --secondary-color: #091d32;
+  --border-radius: 10px;
+  --font-size-base: 14px;
+}
+.settings-container {
+  max-width: 550px;
+  margin: 130px auto 40px;
+  padding: 30px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--secondary-color);
+  text-align: center;
+}
+.settings-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #091d32;
+  margin-bottom: 20px;
+}
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.form-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+#previewImg {
+  width: 100px;
+  height: 100px;
+  border-radius: 10%;
+  margin-top: 10px;
+  object-fit: cover;
+}
+.save-btn {
+  background: var(--secondary-color);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.save-btn:hover {
+  background: #0c2b46;
+}
+button,
+.btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.nav-buttons button {
+  margin-left: 5px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  background: white;
+  color:#091d32;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.nav-buttons button:hover {
+  background-color:#091d32;
+  color: white;
+}
+</style>
+<body>
+  <header class="navbar">
+    <div class="logo-container">
+      <a href="home.html"><img src="/images/logo.png" alt="ProMerge Logo" style="height:50px;" /></a>
+      <span class="username">Welcome, <span id="userName">User</span></span>
+    </div>
+    <div class="nav-buttons">
+      <button class="back-btn" id="goBackBtn">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+    </div>
+  </header>
+
+  <main class="settings-container">
+    <h1 class="settings-title">Settings</h1>
+    <form id="settings-form">
+      <div class="form-group">
+        <label for="username">Change Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter new username" />
+      </div>
+      <div class="form-group">
+        <label for="email">Change Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter new email" />
+      </div>
+      <div class="form-group">
+        <label for="password">Change Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter new password" />
+      </div>
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+
+    <div id="success-notification" class="notification hidden">
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import {
+      getAuth, updateEmail, updatePassword, updateProfile,
+      onAuthStateChanged, sendEmailVerification,
+      reauthenticateWithCredential, EmailAuthProvider
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, getDoc
+    } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyBTyjjg9XUVfzuxoL-1QbjXOMxRut8qj_w",
+  authDomain: "promerge-77.firebaseapp.com",
+  databaseURL: "https://promerge-77-default-rtdb.firebaseio.com",
+  projectId: "promerge-77",
+  storageBucket: "promerge-77.firebasestorage.app", 
+  messagingSenderId: "43078751800",
+  appId: "1:43078751800:web:df05bfe75eeb348ffcb8cd",
+  measurementId: "G-WEEYGM82WK"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "/login.html";
+      } else {
+        document.getElementById("userName").innerText = user.displayName || "User";
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          document.getElementById("username").value = userData.firstName || "";
+          document.getElementById("email").value = user.email;
+        }
+      }
+    });
+
+    async function reauthenticateUser(user) {
+      const currentPassword = prompt("⚠️ Enter your current password to confirm:");
+      if (!currentPassword) {
+        alert("❌ Update cancelled.");
+        throw new Error("User cancelled.");
+      }
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+    }
+
+    document.getElementById("settings-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        await reauthenticateUser(user);
+
+        if (username) {
+          await updateProfile(user, { displayName: username });
+          await setDoc(doc(db, "users", user.uid), { firstName: username }, { merge: true });
+        }
+
+        if (email && email !== user.email) {
+          await sendEmailVerification(user);
+          alert("📧 Verification email sent. Check inbox.");
+
+          const checkInterval = setInterval(async () => {
+            await user.reload();
+            if (user.emailVerified) {
+              clearInterval(checkInterval);
+              await updateEmail(user, email);
+              alert("✅ Email updated.");
+              window.location.href = "/dashboard.html";
+            }
+          }, 5000);
+
+          return;
+        }
+
+        if (password) {
+          await updatePassword(user, password);
+          alert("✅ Password updated.");
+        }
+
+        alert("✅ Changes saved!");
+        window.location.href = "/dashboard.html";
+
+      } catch (error) {
+        console.error("❌ Update error:", error);
+        alert("⚠️ " + error.message);
+      }
+    });
+
+    document.getElementById("goBackBtn").addEventListener("click", () => {
+      window.location.href = "/dashboard.html";
+    });
+  </script>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProMerge. All Rights Reserved.</p>
+  </footer>
+</body>
+</html>

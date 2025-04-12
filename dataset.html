@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Datasets | ProMerge</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/buttons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .username {
+      font-size: 18px;
+      font-weight: 600;
+      color: #091d32;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .dataset-container {
+      max-width: 1000px;
+      margin: 140px auto 80px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .dataset-container h1 {
+      color: #091d32;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .dataset-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .dataset-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dataset-icon {
+      font-size: 26px;
+      color: #28a745;
+    }
+
+    .dataset-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #091d32;
+    }
+
+    .dataset-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .dataset-actions button, .dataset-actions a {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-view { background-color: #007bff; }
+    .btn-edit { background-color: #ffc107; color: black; }
+    .btn-delete { background-color: #dc3545; }
+
+    .btn-view:hover { background-color: #0056b3; }
+    .btn-edit:hover { background-color: #e0a800; color: white; }
+    .btn-delete:hover { background-color: #bd2130; }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #091d32;
+      color: white;
+    }
+
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="home.html">
+        <img src="logo.png" alt="ProMerge Logo" style="height:50px;" />
+      </a>
+      <span class="username"><strong><span id="userName"></span></strong>'s Datasets</span>
+    </div>
+    <div class="nav-buttons">
+      <button class="dashboard-btn" onclick="goToDashboard()">
+        <i class="fas fa-home"></i> Dashboard
+      </button>
+    </div>
+  </nav>
+
+  <main class="dataset-container">
+    <h1>Uploaded Datasets</h1>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search by dataset name...">
+    </div>
+
+    <div id="datasetList"></div>
+
+    <div class="pagination">
+      <button id="prevBtn" disabled>Previous</button>
+      <button id="nextBtn" disabled>Next</button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProMerge. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Firebase Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIK9LMoVpUXPwpZi-gyvFWJInlyPsZWKQ",
+      authDomain: "promerge-7a44e.firebaseapp.com",
+      projectId: "promerge-7a44e",
+      storageBucket: "promerge-7a44e.appspot.com",
+      messagingSenderId: "456764615195",
+      appId: "1:456764615195:web:ce56a94f08265bfef5a6be"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    let allDatasets = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+      document.getElementById("userName").textContent = user.displayName || "User";
+
+      const q = query(collection(db, "datasets"), where("uid", "==", user.uid));
+      const snapshot = await getDocs(q);
+      allDatasets = snapshot.docs.map(doc => doc.data());
+
+      renderPage();
+      document.getElementById("searchInput").addEventListener("input", renderPage);
+    });
+
+    function renderPage() {
+      const list = document.getElementById("datasetList");
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allDatasets.filter(d => d.name.toLowerCase().includes(search));
+      const start = (currentPage - 1) * itemsPerPage;
+      const paginated = filtered.slice(start, start + itemsPerPage);
+
+      list.innerHTML = paginated.map(ds => `
+        <div class="dataset-card">
+          <div class="dataset-info">
+            <i class="fas fa-file-excel dataset-icon"></i>
+            <span class="dataset-name">${ds.name}</span>
+          </div>
+          <div class="dataset-actions">
+            <a href="${ds.url}" target="_blank" class="btn-view">View</a>
+            <button class="btn-edit" onclick="alert('Edit: ${ds.name}')">Edit</button>
+            <button class="btn-delete" onclick="alert('Delete: ${ds.name}')">Delete</button>
+          </div>
+        </div>`).join("");
+
+      document.getElementById("prevBtn").disabled = currentPage === 1;
+      document.getElementById("nextBtn").disabled = start + itemsPerPage >= filtered.length;
+    }
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      currentPage--;
+      renderPage();
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentPage++;
+      renderPage();
+    });
+  </script>
+  <script>
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

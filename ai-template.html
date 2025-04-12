@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Generated Template | ProMerge</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/buttons.css" />
+  <link rel="stylesheet" href="css/template-ai.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+ 
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="home.html">
+        <img src="/images/logo.png" alt="ProMerge Logo" style="height:50px;" />
+      </a>
+      <span class="username">Welcome, <span id="userName">User</span>
+    </div>
+    <div class="nav-buttons">
+      <button class="dashboard-btn" onclick="goToDashboard()"><i class="fas fa-home"></i> Dashboard</button>
+    </div>
+  </nav>
+
+  <div class="ai-template-container">
+    <h1>AI Generated Template</h1>
+    <div class="form-container">
+      <label for="templateTitle">Template Title</label>
+      <input type="text" id="templateTitle" class="input-field" placeholder="Title">
+
+      <label for="templateDescription">Template Description</label>
+      <textarea id="templateDescription" class="textarea-field" placeholder="Write Your Template Description"></textarea>
+
+     
+
+      <label for="datasetUpload" class="upload-btn">
+        <i class="fas fa-database"></i> Upload Dataset
+      </label>
+      <input type="file" id="datasetUpload" accept=".csv,.xlsx" />
+
+      <div class="action-buttons">
+        <button class="btn-generate" onclick="generateTemplate()"><i class="fas fa-magic"></i> Generate</button>
+        <button class="btn-save" onclick="saveTemplate()"><i class="fas fa-save"></i> Save Template</button>
+        <button class="btn-delete" onclick="deleteTemplate()"><i class="fas fa-trash"></i> Delete Template</button>
+      </div>
+    </div>
+
+    <div id="templateResult" class="generated-template hidden"></div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProMerge. All Rights Reserved.</p>
+  </footer>
+
+  <script src="ai-template.js"></script>
+  <script type="module" src="auth-handler.js"></script>
+  <script>
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+
+    function generateTemplate() {
+      const result = document.getElementById("templateResult");
+      result.classList.remove("hidden");
+      result.textContent = `Template Generated:\nTitle: ${document.getElementById("templateTitle").value}\nDescription: ${document.getElementById("templateDescription").value}`;
+    }
+
+    function saveTemplate() {
+      alert("✅ Template saved!");
+    }
+
+    function deleteTemplate() {
+      if (confirm("Are you sure you want to delete this template?")) {
+        alert("🗑️ Template deleted.");
+      }
+    }
+  </script>
+</body>
+</html>
